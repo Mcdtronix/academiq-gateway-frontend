@@ -1,3 +1,5 @@
+
+// This is a custom hook that provides toast functionality
 import * as React from "react"
 
 import type {
@@ -5,7 +7,7 @@ import type {
   ToastProps,
 } from "@/components/ui/toast"
 
-const TOAST_LIMIT = 1
+const TOAST_LIMIT = 5
 const TOAST_REMOVE_DELAY = 1000000
 
 type ToasterToast = ToastProps & {
@@ -25,7 +27,7 @@ const actionTypes = {
 let count = 0
 
 function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER
+  count = (count + 1) % Number.MAX_VALUE
   return count.toString()
 }
 
@@ -188,4 +190,4 @@ function useToast() {
   }
 }
 
-export { useToast, toast }
+export { toast, useToast }

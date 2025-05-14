@@ -1,44 +1,64 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ReceptionDashboard from './pages/reception/ReceptionDashboard';
-import HealthDashboard from './pages/health/HealthDashboard';
-import InmateRegistration from './pages/reception/InmateRegistration';
-import InmateDetails from './pages/shared/InmateDetails';
-import InmateHealth from './pages/health/InmateHealth';
-import NotFound from './pages/NotFound';
-import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './contexts/AuthContext';
-import { Toaster } from './components/ui/toaster';
+import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/contexts/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import LandingPage from '@/pages/LandingPage';
+import LoginPage from '@/pages/LoginPage';
+import NotFound from '@/pages/NotFound';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
+import OfficerManagement from '@/pages/admin/OfficerManagement';
+import InmateOverview from '@/pages/admin/InmateOverview';
+import ReceptionDashboard from '@/pages/reception/ReceptionDashboard';
+import InmateRegistration from '@/pages/reception/InmateRegistration';
+import HealthDashboard from '@/pages/health/HealthDashboard';
+import InmateHealth from '@/pages/health/InmateHealth';
+import OPDVisitPage from '@/pages/health/OPDVisitPage';
+import OPDRecordsPage from '@/pages/health/OPDRecordsPage';
+import InmateDetails from '@/pages/shared/InmateDetails';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
+          {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           
-          {/* Admin Routes */}
-          <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
+          {/* Admin routes */}
+          <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']} />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="officers" element={<OfficerManagement />} />
+            <Route path="inmates" element={<InmateOverview />} />
+          </Route>
           
-          {/* Reception Routes */}
-          <Route path="/reception" element={<ProtectedRoute allowedRoles={['reception', 'admin']}><ReceptionDashboard /></ProtectedRoute>} />
-          <Route path="/reception/register" element={<ProtectedRoute allowedRoles={['reception', 'admin']}><InmateRegistration /></ProtectedRoute>} />
+          {/* Reception routes */}
+          <Route path="/reception" element={<ProtectedRoute allowedRoles={['reception']} />}>
+            <Route index element={<ReceptionDashboard />} />
+            <Route path="register" element={<InmateRegistration />} />
+          </Route>
           
-          {/* Health Routes */}
-          <Route path="/health" element={<ProtectedRoute allowedRoles={['health', 'admin']}><HealthDashboard /></ProtectedRoute>} />
-          <Route path="/health/inmate/:id" element={<ProtectedRoute allowedRoles={['health', 'admin']}><InmateHealth /></ProtectedRoute>} />
+          {/* Health department routes */}
+          <Route path="/health" element={<ProtectedRoute allowedRoles={['health']} />}>
+            <Route index element={<HealthDashboard />} />
+            <Route path="inmate/:id" element={<InmateHealth />} />
+            <Route path="inmate/:id/opd/new" element={<OPDVisitPage />} />
+            <Route path="inmate/:id/opd" element={<OPDRecordsPage />} />
+          </Route>
           
-          {/* Shared Routes */}
-          <Route path="/inmates/:id" element={<ProtectedRoute allowedRoles={['admin', 'reception', 'health']}><InmateDetails /></ProtectedRoute>} />
+          {/* Shared routes */}
+          <Route path="/inmates/:id" element={
+            <ProtectedRoute allowedRoles={['admin', 'reception', 'health']} />
+          }>
+            <Route index element={<InmateDetails />} />
+          </Route>
           
+          {/* 404 route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <Toaster />
       </Router>
+      <Toaster />
     </AuthProvider>
   );
 }

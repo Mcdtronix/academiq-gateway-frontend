@@ -78,6 +78,14 @@ export const InmateBasicInfo: React.FC<InmateBasicInfoProps> = ({ inmate }) => {
             <Button 
               className="w-full mt-2"
               variant="outline"
+              onClick={() => navigate(`/health/inmate/${inmate.id}/opd`)}
+            >
+              View OPD History
+            </Button>
+            
+            <Button 
+              className="w-full mt-2"
+              variant="outline"
               onClick={() => navigate(`/inmates/${inmate.id}`)}
             >
               View Full Profile
