@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -422,7 +421,7 @@ const InmateHealth = () => {
                           </SelectContent>
                         </Select>
                         <FormDescription>
-                          Assessment of the inmate's overall health condition
+                          Assessment of the inmate&apos;s overall health condition
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -431,6 +430,7 @@ const InmateHealth = () => {
                   
                   <Separator />
                   
+                  {/* Medical conditions section */}
                   <div>
                     <FormLabel className="text-base">Medical Conditions</FormLabel>
                     <FormDescription className="mt-1 mb-3">
@@ -508,6 +508,7 @@ const InmateHealth = () => {
                   
                   <Separator />
                   
+                  {/* Allergies section */}
                   <div>
                     <FormLabel className="text-base">Allergies</FormLabel>
                     <FormDescription className="mt-1 mb-3">
