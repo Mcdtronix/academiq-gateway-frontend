@@ -161,7 +161,7 @@ export const HealthRecordForm: React.FC<HealthRecordFormProps> = ({
                     <FormLabel>Height</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="e.g., 5'10\" or 178 cm" 
+                        placeholder="e.g., 5'10&quot; or 178 cm" 
                         {...field} 
                       />
                     </FormControl>
