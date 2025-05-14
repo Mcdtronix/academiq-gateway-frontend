@@ -1,171 +1,212 @@
 
-import { DashboardLayout } from "@/components/DashboardLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
-  BookOpen, 
-  FileText, 
-  School, 
-  Settings, 
-  Users 
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { adminApi } from "@/lib/api";
+  Users, UserPlus, UserMinus, Home, LogOut, 
+  Search, Plus, FileText, RefreshCw
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { adminApi } from '@/lib/api';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { DashboardShell } from '@/components/DashboardShell';
+import OfficerManagement from './OfficerManagement';
+import InmateOverview from './InmateOverview';
+import { useToast } from '@/hooks/use-toast';
 
 const AdminDashboard = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState({
-    students: 0,
-    teachers: 0,
-    courses: 0,
-    pendingFees: 0,
+    totalInmates: 0,
+    totalOfficers: 0,
+    pendingAdmissions: 0,
+    recentDischarges: 0
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // In a real app, you'd call these APIs and set the data
-        // const studentsResponse = await adminApi.getAllStudents();
-        // const teachersResponse = await adminApi.getAllTeachers();
-        // etc...
+        // In a real app, you would fetch actual data from your API
+        // This is just a placeholder for demonstration
+        const response = await adminApi.getAllInmates();
         
-        // For now, just simulate loading
+        if (response.data) {
+          // Simulate some stats based on the response
+          setStats({
+            totalInmates: response.data.length || 0,
+            totalOfficers: 25, // Placeholder
+            pendingAdmissions: 3, // Placeholder
+            recentDischarges: 2 // Placeholder
+          });
+        }
       } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
+        console.error('Error fetching dashboard data:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to fetch dashboard data',
+          variant: 'destructive',
+        });
       } finally {
         setIsLoading(false);
       }
     };
-    
-    // Simulate API fetch
-    setTimeout(() => {
-      setStats({
-        students: 325,
-        teachers: 42,
-        courses: 36,
-        pendingFees: 45,
-      });
-      setIsLoading(false);
-    }, 1000);
-    
-    // Uncomment to use real API
-    // fetchDashboardData();
-  }, []);
 
-  const dashboardCards = [
-    {
-      title: "Students",
-      value: isLoading ? "..." : stats.students,
-      icon: <Users className="h-6 w-6" />,
-      color: "bg-blue-100 text-blue-700",
-      link: "/admin/students",
-    },
-    {
-      title: "Teachers",
-      value: isLoading ? "..." : stats.teachers,
-      icon: <School className="h-6 w-6" />,
-      color: "bg-green-100 text-green-700",
-      link: "/admin/teachers",
-    },
-    {
-      title: "Courses",
-      value: isLoading ? "..." : stats.courses,
-      icon: <BookOpen className="h-6 w-6" />,
-      color: "bg-purple-100 text-purple-700",
-      link: "/admin/courses",
-    },
-    {
-      title: "Pending Fees",
-      value: isLoading ? "..." : stats.pendingFees,
-      icon: <FileText className="h-6 w-6" />,
-      color: "bg-amber-100 text-amber-700",
-      link: "/admin/fees",
-    },
-    {
-      title: "Settings",
-      value: "Manage",
-      icon: <Settings className="h-6 w-6" />,
-      color: "bg-sky-100 text-sky-700",
-      link: "/admin/settings",
-    },
-  ];
+    fetchDashboardData();
+  }, [toast]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+    toast({
+      title: 'Logged out',
+      description: 'You have been successfully logged out',
+    });
+  };
 
   return (
-    <DashboardLayout userType="admin">
-      <h1 className="page-title">Administration Dashboard</h1>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {dashboardCards.map((card, index) => (
-          <Card key={index} className="dashboard-card">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center justify-between">
-                {card.title}
-                <div className={`p-2 rounded-full ${card.color}`}>
-                  {card.icon}
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold mb-2">{card.value}</div>
-              <Button asChild variant="outline" size="sm" className="w-full">
-                <Link to={card.link}>Manage</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <DashboardShell
+      title="Admin Dashboard"
+      description="Manage prison operations, officers, and inmates"
+      user={{ name: 'Admin User', role: 'Administrator' }}
+      onLogout={handleLogout}
+      navItems={[
+        { icon: <Home size={20} />, label: 'Dashboard', href: '/admin' },
+        { icon: <Users size={20} />, label: 'Officers', href: '/admin/officers' },
+        { icon: <FileText size={20} />, label: 'Inmates', href: '/admin/inmates' },
+        { icon: <RefreshCw size={20} />, label: 'Transfers', href: '/admin/transfers' },
+      ]}
+    >
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardHeader>
-            <CardTitle>Recent Activities</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Inmates</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <ul className="space-y-3">
-              <li className="p-2 bg-accent rounded-md flex justify-between">
-                <span>New student registration</span>
-                <span className="text-sm text-muted-foreground">Today, 10:23 AM</span>
-              </li>
-              <li className="p-2 bg-accent rounded-md flex justify-between">
-                <span>Fee payment received</span>
-                <span className="text-sm text-muted-foreground">Today, 9:45 AM</span>
-              </li>
-              <li className="p-2 bg-accent rounded-md flex justify-between">
-                <span>New course added</span>
-                <span className="text-sm text-muted-foreground">Yesterday, 3:30 PM</span>
-              </li>
-              <li className="p-2 bg-accent rounded-md flex justify-between">
-                <span>Teacher leave approved</span>
-                <span className="text-sm text-muted-foreground">Yesterday, 11:15 AM</span>
-              </li>
-            </ul>
+            <div className="text-2xl font-bold">{isLoading ? '...' : stats.totalInmates}</div>
+            <p className="text-xs text-muted-foreground">
+              Currently housed inmates
+            </p>
           </CardContent>
         </Card>
-        
         <Card>
-          <CardHeader>
-            <CardTitle>System Notices</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Prison Officers</CardTitle>
+            <UserPlus className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <ul className="space-y-3">
-              <li className="p-2 bg-red-100 text-red-700 rounded-md">
-                <div className="font-medium">Database backup required</div>
-                <div className="text-sm">Scheduled backup failed last night</div>
-              </li>
-              <li className="p-2 bg-amber-100 text-amber-700 rounded-md">
-                <div className="font-medium">System update available</div>
-                <div className="text-sm">Version 2.3.4 ready to install</div>
-              </li>
-              <li className="p-2 bg-green-100 text-green-700 rounded-md">
-                <div className="font-medium">All systems operational</div>
-                <div className="text-sm">No critical issues detected</div>
-              </li>
-            </ul>
+            <div className="text-2xl font-bold">{isLoading ? '...' : stats.totalOfficers}</div>
+            <p className="text-xs text-muted-foreground">
+              Active staff members
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Admissions</CardTitle>
+            <Plus className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{isLoading ? '...' : stats.pendingAdmissions}</div>
+            <p className="text-xs text-muted-foreground">
+              Awaiting approval
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Recent Discharges</CardTitle>
+            <UserMinus className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{isLoading ? '...' : stats.recentDischarges}</div>
+            <p className="text-xs text-muted-foreground">
+              Last 30 days
+            </p>
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+
+      <div className="mt-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="space-x-2">
+            <Button variant="outline" size="sm">
+              <Plus className="mr-2 h-4 w-4" />
+              New Admission
+            </Button>
+            <Button variant="outline" size="sm">
+              <UserPlus className="mr-2 h-4 w-4" />
+              New Officer
+            </Button>
+          </div>
+          <div className="relative w-64">
+            <Search className="absolute left-2 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              className="pl-8"
+            />
+          </div>
+        </div>
+
+        <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="inmates">Inmate Management</TabsTrigger>
+            <TabsTrigger value="officers">Officer Management</TabsTrigger>
+          </TabsList>
+          <TabsContent value="overview" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+                <CardDescription>
+                  The latest actions in the prison management system
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <p>Loading recent activities...</p>
+                ) : (
+                  <ul className="space-y-2">
+                    <li className="flex items-center justify-between border-b pb-2">
+                      <span>New inmate admitted: John Doe (ID: 43521)</span>
+                      <span className="text-xs text-muted-foreground">2 hours ago</span>
+                    </li>
+                    <li className="flex items-center justify-between border-b pb-2">
+                      <span>Inmate transferred: Richard Smith (ID: 32155)</span>
+                      <span className="text-xs text-muted-foreground">5 hours ago</span>
+                    </li>
+                    <li className="flex items-center justify-between border-b pb-2">
+                      <span>New officer registered: Officer Williams</span>
+                      <span className="text-xs text-muted-foreground">Yesterday</span>
+                    </li>
+                    <li className="flex items-center justify-between border-b pb-2">
+                      <span>Inmate discharged: Michael Brown (ID: 29876)</span>
+                      <span className="text-xs text-muted-foreground">Yesterday</span>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>Health check scheduled for Block C</span>
+                      <span className="text-xs text-muted-foreground">2 days ago</span>
+                    </li>
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="inmates">
+            <InmateOverview />
+          </TabsContent>
+          <TabsContent value="officers">
+            <OfficerManagement />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </DashboardShell>
   );
 };
 

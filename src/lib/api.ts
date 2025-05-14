@@ -1,7 +1,7 @@
 
-// This file handles all API calls to the backend
+// Prison Management System API Service
 
-const API_URL = 'https://api.academia-school.com'; // Replace with your actual API URL
+const API_URL = 'https://api.prisonmanagement.com'; // Replace with your actual API URL
 
 interface ApiResponse<T> {
   data?: T;
@@ -28,7 +28,6 @@ async function fetchApi<T>(
     });
     
     if (!response.ok) {
-      // Try to get error message from response
       try {
         const errorData = await response.json();
         return { error: errorData.message || `HTTP error! Status: ${response.status}` };
@@ -50,19 +49,12 @@ async function fetchApi<T>(
   }
 }
 
-// Auth endpoints
+// Auth API endpoints
 export const authApi = {
-  login: async (email: string, password: string) => {
+  login: async (username: string, password: string) => {
     return fetchApi('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password })
-    });
-  },
-  
-  register: async (userData: any) => {
-    return fetchApi('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(userData)
+      body: JSON.stringify({ username, password })
     });
   },
   
@@ -76,149 +68,149 @@ export const authApi = {
   }
 };
 
-// Student endpoints
-export const studentApi = {
-  getCourses: async () => {
-    return fetchApi('/students/courses');
-  },
-  
-  getResults: async () => {
-    return fetchApi('/students/results');
-  },
-  
-  getLibraryBooks: async () => {
-    return fetchApi('/library/books');
-  },
-  
-  getFeeStatus: async () => {
-    return fetchApi('/students/fees');
-  },
-  
-  getProfile: async () => {
-    return fetchApi('/students/profile');
-  },
-  
-  updateProfile: async (profileData: any) => {
-    return fetchApi('/students/profile', {
-      method: 'PUT',
-      body: JSON.stringify(profileData)
-    });
-  }
-};
-
-// Teacher endpoints
-export const teacherApi = {
-  getCourses: async () => {
-    return fetchApi('/teachers/courses');
-  },
-  
-  getStudents: async (courseId?: string) => {
-    return fetchApi(courseId ? `/teachers/courses/${courseId}/students` : '/teachers/students');
-  },
-  
-  recordAttendance: async (attendanceData: any) => {
-    return fetchApi('/teachers/attendance', {
-      method: 'POST',
-      body: JSON.stringify(attendanceData)
-    });
-  },
-  
-  submitResults: async (resultsData: any) => {
-    return fetchApi('/teachers/results', {
-      method: 'POST',
-      body: JSON.stringify(resultsData)
-    });
-  }
-};
-
-// Admin endpoints
+// Admin API endpoints
 export const adminApi = {
-  getAllStudents: async () => {
-    return fetchApi('/admin/students');
+  // Officer management
+  getOfficers: async () => {
+    return fetchApi('/admin/officers');
   },
   
-  addStudent: async (studentData: any) => {
-    return fetchApi('/admin/students', {
+  createOfficer: async (officerData: any) => {
+    return fetchApi('/admin/officers', {
       method: 'POST',
-      body: JSON.stringify(studentData)
+      body: JSON.stringify(officerData)
     });
   },
   
-  getAllTeachers: async () => {
-    return fetchApi('/admin/teachers');
-  },
-  
-  addTeacher: async (teacherData: any) => {
-    return fetchApi('/admin/teachers', {
-      method: 'POST',
-      body: JSON.stringify(teacherData)
-    });
-  },
-  
-  getCourses: async () => {
-    return fetchApi('/admin/courses');
-  },
-  
-  addCourse: async (courseData: any) => {
-    return fetchApi('/admin/courses', {
-      method: 'POST',
-      body: JSON.stringify(courseData)
-    });
-  },
-  
-  getLibraryBooks: async () => {
-    return fetchApi('/admin/library/books');
-  },
-  
-  addBook: async (bookData: any) => {
-    return fetchApi('/admin/library/books', {
-      method: 'POST',
-      body: JSON.stringify(bookData)
-    });
-  },
-  
-  getFeeRecords: async () => {
-    return fetchApi('/admin/fees');
-  },
-  
-  recordFeePayment: async (paymentData: any) => {
-    return fetchApi('/admin/fees/payment', {
-      method: 'POST',
-      body: JSON.stringify(paymentData)
-    });
-  },
-  
-  getSystemSettings: async () => {
-    return fetchApi('/admin/settings');
-  },
-  
-  updateSystemSettings: async (settingsData: any) => {
-    return fetchApi('/admin/settings', {
+  updateOfficer: async (id: string, officerData: any) => {
+    return fetchApi(`/admin/officers/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(settingsData)
+      body: JSON.stringify(officerData)
+    });
+  },
+  
+  deleteOfficer: async (id: string) => {
+    return fetchApi(`/admin/officers/${id}`, {
+      method: 'DELETE'
+    });
+  },
+  
+  // Inmate management
+  getAllInmates: async () => {
+    return fetchApi('/admin/inmates');
+  },
+  
+  approveInmate: async (id: string) => {
+    return fetchApi(`/admin/inmates/${id}/approve`, {
+      method: 'POST'
+    });
+  },
+  
+  dischargeInmate: async (id: string, reason: string) => {
+    return fetchApi(`/admin/inmates/${id}/discharge`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    });
+  },
+  
+  transferInmate: async (id: string, destination: string) => {
+    return fetchApi(`/admin/inmates/${id}/transfer`, {
+      method: 'POST',
+      body: JSON.stringify({ destination })
+    });
+  },
+  
+  classifyInmate: async (id: string, classification: string) => {
+    return fetchApi(`/admin/inmates/${id}/classify`, {
+      method: 'POST',
+      body: JSON.stringify({ classification })
     });
   }
 };
 
-// Library endpoints
-export const libraryApi = {
-  getAllBooks: async () => {
-    return fetchApi('/library/books');
-  },
-  
-  searchBooks: async (query: string) => {
-    return fetchApi(`/library/books/search?q=${encodeURIComponent(query)}`);
-  },
-  
-  borrowBook: async (bookId: string) => {
-    return fetchApi(`/library/books/${bookId}/borrow`, {
-      method: 'POST'
+// Reception API endpoints
+export const receptionApi = {
+  registerInmate: async (inmateData: any) => {
+    return fetchApi('/reception/inmates', {
+      method: 'POST',
+      body: JSON.stringify(inmateData)
     });
   },
   
-  returnBook: async (bookId: string) => {
-    return fetchApi(`/library/books/${bookId}/return`, {
-      method: 'POST'
+  getPendingInmates: async () => {
+    return fetchApi('/reception/inmates/pending');
+  },
+  
+  getInmate: async (id: string) => {
+    return fetchApi(`/reception/inmates/${id}`);
+  },
+  
+  registerValuables: async (id: string, valuablesData: any) => {
+    return fetchApi(`/reception/inmates/${id}/valuables`, {
+      method: 'POST',
+      body: JSON.stringify(valuablesData)
     });
+  },
+  
+  updateInmate: async (id: string, inmateData: any) => {
+    return fetchApi(`/reception/inmates/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(inmateData)
+    });
+  }
+};
+
+// Health API endpoints
+export const healthApi = {
+  getInmateHealthRecord: async (id: string) => {
+    return fetchApi(`/health/inmates/${id}`);
+  },
+  
+  createHealthRecord: async (id: string, healthData: any) => {
+    return fetchApi(`/health/inmates/${id}`, {
+      method: 'POST',
+      body: JSON.stringify(healthData)
+    });
+  },
+  
+  updateHealthRecord: async (id: string, healthData: any) => {
+    return fetchApi(`/health/inmates/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(healthData)
+    });
+  },
+  
+  registerOPDVisit: async (id: string, visitData: any) => {
+    return fetchApi(`/health/inmates/${id}/opd`, {
+      method: 'POST',
+      body: JSON.stringify(visitData)
+    });
+  },
+  
+  getOPDRecords: async (id: string) => {
+    return fetchApi(`/health/inmates/${id}/opd`);
+  },
+  
+  getHealthStatistics: async () => {
+    return fetchApi('/health/statistics');
+  }
+};
+
+// Shared inmate API endpoints
+export const inmateApi = {
+  searchInmates: async (query: string) => {
+    return fetchApi(`/inmates/search?q=${encodeURIComponent(query)}`);
+  },
+  
+  getInmateDetails: async (id: string) => {
+    return fetchApi(`/inmates/${id}`);
+  },
+  
+  getInmateOffenses: async (id: string) => {
+    return fetchApi(`/inmates/${id}/offenses`);
+  },
+  
+  getInmateTimeline: async (id: string) => {
+    return fetchApi(`/inmates/${id}/timeline`);
   }
 };

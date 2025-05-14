@@ -1,60 +1,46 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ReceptionDashboard from './pages/reception/ReceptionDashboard';
+import HealthDashboard from './pages/health/HealthDashboard';
+import InmateRegistration from './pages/reception/InmateRegistration';
+import InmateDetails from './pages/shared/InmateDetails';
+import InmateHealth from './pages/health/InmateHealth';
+import NotFound from './pages/NotFound';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './contexts/AuthContext';
+import { Toaster } from './components/ui/toaster';
 
-// Public Pages
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-
-// Student Pages
-import StudentDashboard from "./pages/student/StudentDashboard";
-import Library from "./pages/student/Library";
-import Results from "./pages/student/Results";
-import FeePayment from "./pages/student/FeePayment";
-
-// Teacher Pages
-import TeacherDashboard from "./pages/teacher/TeacherDashboard";
-
-// Admin Pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
-
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
         <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          
-          {/* Student Routes */}
-          <Route path="/student" element={<StudentDashboard />} />
-          <Route path="/student/library" element={<Library />} />
-          <Route path="/student/results" element={<Results />} />
-          <Route path="/student/fees" element={<FeePayment />} />
-          
-          {/* Teacher Routes */}
-          <Route path="/teacher" element={<TeacherDashboard />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
           
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
           
-          {/* Catch-all Route */}
+          {/* Reception Routes */}
+          <Route path="/reception" element={<ProtectedRoute allowedRoles={['reception', 'admin']}><ReceptionDashboard /></ProtectedRoute>} />
+          <Route path="/reception/register" element={<ProtectedRoute allowedRoles={['reception', 'admin']}><InmateRegistration /></ProtectedRoute>} />
+          
+          {/* Health Routes */}
+          <Route path="/health" element={<ProtectedRoute allowedRoles={['health', 'admin']}><HealthDashboard /></ProtectedRoute>} />
+          <Route path="/health/inmate/:id" element={<ProtectedRoute allowedRoles={['health', 'admin']}><InmateHealth /></ProtectedRoute>} />
+          
+          {/* Shared Routes */}
+          <Route path="/inmates/:id" element={<ProtectedRoute allowedRoles={['admin', 'reception', 'health']}><InmateDetails /></ProtectedRoute>} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+        <Toaster />
+      </Router>
+    </AuthProvider>
+  );
+}
 
 export default App;
