@@ -20,7 +20,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormValues, offenceSchema } from './index';
 import { z } from 'zod';
-import { Plus, X, Check, 'file-text' as FileText } from 'lucide-react';
+import { Plus, X, Check, FileText } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 
 interface OffencesProps {
