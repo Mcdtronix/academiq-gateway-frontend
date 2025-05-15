@@ -27,32 +27,92 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           
           {/* Admin routes */}
-          <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']} />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="officers" element={<OfficerManagement />} />
-            <Route path="inmates" element={<InmateOverview />} />
-          </Route>
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/officers" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <OfficerManagement />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin/inmates" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <InmateOverview />
+              </ProtectedRoute>
+            } 
+          />
           
           {/* Reception routes */}
-          <Route path="/reception" element={<ProtectedRoute allowedRoles={['reception']} />}>
-            <Route index element={<ReceptionDashboard />} />
-            <Route path="register" element={<InmateRegistration />} />
-          </Route>
+          <Route 
+            path="/reception" 
+            element={
+              <ProtectedRoute allowedRoles={['reception']}>
+                <ReceptionDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/reception/register" 
+            element={
+              <ProtectedRoute allowedRoles={['reception']}>
+                <InmateRegistration />
+              </ProtectedRoute>
+            } 
+          />
           
           {/* Health department routes */}
-          <Route path="/health" element={<ProtectedRoute allowedRoles={['health']} />}>
-            <Route index element={<HealthDashboard />} />
-            <Route path="inmate/:id" element={<InmateHealth />} />
-            <Route path="inmate/:id/opd/new" element={<OPDVisitPage />} />
-            <Route path="inmate/:id/opd" element={<OPDRecordsPage />} />
-          </Route>
+          <Route 
+            path="/health" 
+            element={
+              <ProtectedRoute allowedRoles={['health']}>
+                <HealthDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/health/inmate/:id" 
+            element={
+              <ProtectedRoute allowedRoles={['health']}>
+                <InmateHealth />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/health/inmate/:id/opd/new" 
+            element={
+              <ProtectedRoute allowedRoles={['health']}>
+                <OPDVisitPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/health/inmate/:id/opd" 
+            element={
+              <ProtectedRoute allowedRoles={['health']}>
+                <OPDRecordsPage />
+              </ProtectedRoute>
+            } 
+          />
           
           {/* Shared routes */}
-          <Route path="/inmates/:id" element={
-            <ProtectedRoute allowedRoles={['admin', 'reception', 'health']} />
-          }>
-            <Route index element={<InmateDetails />} />
-          </Route>
+          <Route 
+            path="/inmates/:id" 
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'reception', 'health']}>
+                <InmateDetails />
+              </ProtectedRoute>
+            }
+          />
           
           {/* 404 route */}
           <Route path="*" element={<NotFound />} />

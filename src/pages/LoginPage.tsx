@@ -41,8 +41,8 @@ const LoginPage = () => {
         });
         
         // Redirect based on user role
-        const user = JSON.parse(localStorage.getItem('userData') || '{}');
-        switch(user.role) {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        switch(userData.role) {
           case 'admin':
             navigate('/admin');
             break;
@@ -85,6 +85,13 @@ const LoginPage = () => {
           <CardDescription className="text-center">
             Enter your credentials to access your portal
           </CardDescription>
+          <div className="w-full border-t border-gray-200 my-2"></div>
+          <div className="text-sm text-center text-muted-foreground bg-muted p-2 rounded-lg w-full">
+            <p>Available login credentials:</p>
+            <p>Admin: username: <strong>admin</strong> / password: <strong>admin123</strong></p>
+            <p>Reception: username: <strong>reception</strong> / password: <strong>reception123</strong></p>
+            <p>Health: username: <strong>health</strong> / password: <strong>health123</strong></p>
+          </div>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">

@@ -17,6 +17,31 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Mock users for demo login
+const mockUsers = [
+  {
+    id: "1",
+    username: "admin",
+    password: "admin123",
+    name: "Admin User",
+    role: "admin"
+  },
+  {
+    id: "2",
+    username: "reception",
+    password: "reception123",
+    name: "Reception Staff",
+    role: "reception"
+  },
+  {
+    id: "3",
+    username: "health",
+    password: "health123",
+    name: "Health Officer",
+    role: "health"
+  }
+];
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,15 +50,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check if user is already logged in
     const checkAuthStatus = async () => {
       const token = localStorage.getItem('token');
-      if (token) {
+      const storedUser = localStorage.getItem('userData');
+      if (token && storedUser) {
         try {
-          const response = await authApi.getCurrentUser();
-          if (response.data) {
-            setUser(response.data as User);
-          }
+          // In a real app, we would verify the token with the API
+          // For demo, we'll just use the stored user data
+          const userData = JSON.parse(storedUser);
+          setUser({
+            id: userData.id,
+            name: userData.name,
+            role: userData.role as 'admin' | 'reception' | 'health'
+          });
         } catch (error) {
           console.error('Failed to get current user:', error);
           localStorage.removeItem('token');
+          localStorage.removeItem('userData');
         }
       }
       setLoading(false);
@@ -44,13 +75,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await authApi.login(username, password);
-      if (response.data) {
-        const userData = response.data as { token: string; user: User };
-        localStorage.setItem('token', userData.token);
-        setUser(userData.user);
+      // In a real app, we would make an API call here
+      // For demo, we'll check against our mock users
+      const user = mockUsers.find(u => 
+        u.username === username && u.password === password
+      );
+      
+      if (user) {
+        // Create a mock token (in real apps this would come from the API)
+        const token = btoa(`${user.username}:${Date.now()}`);
+        localStorage.setItem('token', token);
+        
+        // Store user data
+        const userData = {
+          id: user.id,
+          name: user.name,
+          role: user.role
+        };
+        
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        setUser(userData as User);
         return true;
       }
+      
       return false;
     } catch (error) {
       console.error('Login failed:', error);
@@ -60,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userData');
     setUser(null);
   };
 
