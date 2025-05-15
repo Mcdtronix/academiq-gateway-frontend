@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormValues } from './index';
-import { 'dollar-sign' as DollarSign, calendar } from 'lucide-react';
+import { DollarSign, Calendar } from 'lucide-react';
 
 interface RestitutionProps {
   form: UseFormReturn<FormValues>;
@@ -121,7 +121,7 @@ const Restitution: React.FC<RestitutionProps> = ({ form }) => {
         />
         
         <div className="flex items-center gap-2 mb-4">
-          <calendar className="h-5 w-5" />
+          <Calendar className="h-5 w-5" />
           <h3 className="text-base font-medium">Release Date with Restitution</h3>
         </div>
         
