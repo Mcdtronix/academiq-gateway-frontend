@@ -19,7 +19,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormValues } from './index';
-import { user } from 'lucide-react';
+import { User } from 'lucide-react';
 
 interface InmateDetailsProps {
   form: UseFormReturn<FormValues>;
@@ -30,7 +30,7 @@ const InmateDetails: React.FC<InmateDetailsProps> = ({ form }) => {
     <Card>
       <CardHeader>
         <div className="flex items-center">
-          <user className="mr-2 h-5 w-5" />
+          <User className="mr-2 h-5 w-5" />
           <CardTitle>Inmate Details</CardTitle>
         </div>
         <CardDescription>

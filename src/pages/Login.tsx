@@ -17,6 +17,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { authApi } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 
+interface AuthResponse {
+  token: string;
+  role: string;
+}
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,11 +45,14 @@ const Login = () => {
       }
 
       if (response.data) {
-        // Store token in localStorage - this would come from the API in a real app
-        localStorage.setItem("token", response.data.token);
+        // Cast the data to the expected type to access token and role
+        const authData = response.data as AuthResponse;
+        
+        // Store token in localStorage 
+        localStorage.setItem("token", authData.token);
         
         // Determine where to redirect based on user role
-        const userRole = response.data.role;
+        const userRole = authData.role;
         
         toast({
           title: "Login successful",

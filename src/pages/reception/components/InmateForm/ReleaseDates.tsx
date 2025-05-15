@@ -12,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormValues } from './index';
-import { calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 interface ReleaseDatesProps {
   form: UseFormReturn<FormValues>;
@@ -23,7 +23,7 @@ const ReleaseDates: React.FC<ReleaseDatesProps> = ({ form }) => {
     <Card>
       <CardHeader>
         <div className="flex items-center">
-          <calendar className="mr-2 h-5 w-5" />
+          <Calendar className="mr-2 h-5 w-5" />
           <CardTitle>Release Dates</CardTitle>
         </div>
         <CardDescription>

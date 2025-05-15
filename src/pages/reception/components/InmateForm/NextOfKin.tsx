@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormValues } from './index';
-import { users } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 interface NextOfKinProps {
   form: UseFormReturn<FormValues>;
@@ -23,7 +23,7 @@ const NextOfKin: React.FC<NextOfKinProps> = ({ form }) => {
     <Card>
       <CardHeader>
         <div className="flex items-center">
-          <users className="mr-2 h-5 w-5" />
+          <Users className="mr-2 h-5 w-5" />
           <CardTitle>Next of Kin</CardTitle>
         </div>
         <CardDescription>

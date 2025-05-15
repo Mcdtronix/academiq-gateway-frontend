@@ -20,7 +20,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormValues } from './index';
 import { Textarea } from '@/components/ui/textarea';
-import { shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
 interface ClassificationProps {
   form: UseFormReturn<FormValues>;
@@ -31,7 +31,7 @@ const Classification: React.FC<ClassificationProps> = ({ form }) => {
     <Card>
       <CardHeader>
         <div className="flex items-center">
-          <shield className="mr-2 h-5 w-5" />
+          <Shield className="mr-2 h-5 w-5" />
           <CardTitle>Classification</CardTitle>
         </div>
         <CardDescription>
